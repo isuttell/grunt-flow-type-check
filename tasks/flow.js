@@ -10,36 +10,29 @@
 
 module.exports = function(grunt) {
 
-  function run(args, done) {
-    var child = grunt.util.spawn({
-      cmd: args.shift(),
-      args: args,
-      opts: { stdio :'inherit' }
-    }, function (err, result, code) {
-      if (code === 127) {
-        grunt.warn(
-          'You need to have Flow installed ' +
-          'and in your system PATH for this task to work. ' +
-          'More info: https://github.com/isuttell/grunt-flow'
-        );
-      }
-
-      // Fail if we find errors
-      if(code === 2) {
-        return done(false);
-      }
-
-      done();
-    });
-  }
+  var flow = require('./lib/flow').init(grunt);
 
   grunt.registerMultiTask('flow', 'Flow type checking', function() {
     var options = this.options({
-      configFile: '.'
+      configFile: '.',
+      json: false
     });
+
     var callback = this.async();
 
-    run(['flow', 'check', options.configFile], function(err){
+    var args = ['flow', 'check', options.configFile];
+    var opts = {};
+
+    if(options.json) {
+      args.push('--json');
+    } else {
+      opts.stdio = 'inherit';
+    }
+
+    flow.run(args, opts, function(err, output){
+      if(output) {
+        grunt.log.writeln(JSON.stringify(output));
+      }
       callback(err);
     });
   });

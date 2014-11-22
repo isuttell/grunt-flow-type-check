@@ -1,7 +1,7 @@
 'use strict';
 
 var grunt = require('grunt');
-
+var flowLib = require('../tasks/lib/flow').init(grunt);
 /*
   ======== A Handy Little Nodeunit Reference ========
   https://github.com/caolan/nodeunit
@@ -27,22 +27,16 @@ exports.flow = {
     // setup here if necessary
     done();
   },
-  default_options: function(test) {
-    test.expect(1);
+  json: function(test) {
+    test.expect(2);
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
+    var args = ['flow', 'check', 'test/fixtures', '--json'];
+    var opts = {};
 
-    test.done();
-  },
-  custom_options: function(test) {
-    test.expect(1);
-
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
-
-    test.done();
-  },
+    flowLib.run(args, opts, function(err, result) {
+      test.equal(result.passed, false, 'There will be failures');
+      test.equal(result.errors.length, 1, 'There should be one failure');
+      test.done();
+    });
+  }
 };

@@ -23,15 +23,16 @@ module.exports = function(grunt) {
       }
     },
 
-    // Before generating any new files, remove any previously-created files.
-    clean: {
-      tests: ['tmp']
-    },
-
     // Configuration to be run (and then tested).
     flow: {
       default_options: {
         options: {
+          configFile: 'test/fixtures'
+        }
+      },
+      json: {
+        options: {
+          json: true,
           configFile: 'test/fixtures'
         }
       }
@@ -49,7 +50,6 @@ module.exports = function(grunt) {
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this

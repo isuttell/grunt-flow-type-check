@@ -18,9 +18,9 @@ module.exports = function(grunt) {
     }, function (err, result, code) {
       if (code === 127) {
         grunt.warn(
-          'You need to have flow installed ' +
+          'You need to have Flow installed ' +
           'and in your system PATH for this task to work. ' +
-          'More info: https://github.com/isuttell/flow'
+          'More info: https://github.com/isuttell/grunt-flow'
         );
       }
 

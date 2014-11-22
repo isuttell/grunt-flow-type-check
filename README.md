@@ -2,8 +2,9 @@
 
 > Run Facebook's Flow static type checker
 
-[![Build Status](http://img.shields.io/travis/joyent/node.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow-type-check)
+[![Build Status](http://img.shields.io/travis/isuttell/grunt-flow-type-check.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow-type-check)
 [![Peer Dependencies](http://img.shields.io/david/peer/webcomponents/generator-element.svg?style=flat)](https://david-dm.org/isuttell/grunt-flow-type-check#info=peerDependencies)
+[![Github Release](http://img.shields.io/github/release/isuttell/grunt-flow-type-check.svg?style=flat)](https://github.com/isuttell/grunt-flow-type-check/releases)
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -88,4 +89,4 @@ grunt.initConfig({
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+* v0.1.0 - Initial Release

@@ -2,6 +2,8 @@
 
 > Run Flow static type checking
 
+[![Build Status](http://img.shields.io/travis/joyent/node.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow)
+
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
 

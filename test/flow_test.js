@@ -30,7 +30,7 @@ exports.flow = {
   json: function(test) {
     test.expect(2);
 
-    var args = ['flow', 'check', 'test/fixtures', '--json'];
+    var args = ['check', 'test/fixtures', '--json'];
     var opts = {};
 
     flowLib.run(args, opts, function(err, result) {

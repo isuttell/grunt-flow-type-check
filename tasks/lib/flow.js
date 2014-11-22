@@ -17,9 +17,11 @@ exports.init = function(grunt) {
     // Is Flow installed?
     var cmd = which('flow');
 
-    // If not, and we're on mac use a version in the repo
-    if(!cmd && os.platform() === 'darwin') {
-      cmd = './bin/flow';
+    // If not, try using the binary in the repo
+    if(!cmd && os.platform() === 'linux') {
+      cmd = './bin/linux/flow';
+    } else if(!cmd && os.platform() === 'darwin') {
+      cmd = './bin/osx/flow';
     } else if(!cmd) {
       cmd = 'flow';
     }

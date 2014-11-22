@@ -3,6 +3,7 @@
 > Run Facebook's Flow static type checker
 
 [![Build Status](http://img.shields.io/travis/joyent/node.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow-type-check)
+[![Peer Dependencies](http://img.shields.io/david/peer/webcomponents/generator-element.svg?style=flat)](https://david-dm.org/isuttell/grunt-flow-type-check#info=peerDependencies)
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`

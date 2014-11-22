@@ -1,6 +1,6 @@
 # grunt-flow
 
-> Run flow type checking
+> Run Flow static type checking
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -18,6 +18,17 @@ grunt.loadNpmTasks('grunt-flow');
 ```
 
 ## The "flow" task
+_Run this task with the `grunt flow` command._
+
+[Flow](http://flowtype.org) is a static type checker, designed to find type errors in JavaScript programs. Typed Flow code easily transforms down to regular JavaScript, so it runs anywhere.
+
+This tasks requires Flow to be installed on your system. It's currently only available on OSX and linux. Detailed instructions can be found on the [Getting Started](http://flowtype.org/docs/getting-started.html) page. For OSX users, the fastest way to install is using [Brew](http://brew.sh).
+
+````
+brew update
+brew install flow
+````
+
 
 ### Overview
 In your project's Gruntfile, add a section named `flow` to the data object passed into `grunt.initConfig()`.
@@ -27,6 +38,7 @@ grunt.initConfig({
   flow: {
     options: {
       // Task-specific options go here.
+      configFile: '.'
     },
     your_target: {
       // Target-specific file lists and/or options go here.
@@ -37,47 +49,34 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
-
-A string value that is used to do something with whatever.
-
-#### options.punctuation
+#### options.configFile
 Type: `String`
 Default value: `'.'`
 
-A string value that is used to do something else with whatever else.
+The directory where `.flowconfig` is located.
 
 ### Usage Examples
 
 #### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+By default we check for `.flowconfig` in the root directory and then run `flow check`
 
 ```js
 grunt.initConfig({
   flow: {
     options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
   },
 });
 ```
 
 #### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+In this example, `.flowconfig` is located in the `src/` directory of the project.
 
 ```js
 grunt.initConfig({
   flow: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
+      src: 'src/'
+    }
   },
 });
 ```

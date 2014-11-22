@@ -1,8 +1,8 @@
-# grunt-flow
+# grunt-flow-type-check
 
-> Run Flow static type checking
+> Run Facebook's Flow static type checker
 
-[![Build Status](http://img.shields.io/travis/joyent/node.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow)
+[![Build Status](http://img.shields.io/travis/joyent/node.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow-type-check)
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -10,13 +10,13 @@ This plugin requires Grunt `~0.4.5`
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
 ```shell
-npm install grunt-flow --save-dev
+npm install grunt-flow-type-check --save-dev
 ```
 
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
 ```js
-grunt.loadNpmTasks('grunt-flow');
+grunt.loadNpmTasks('grunt-flow-type-check');
 ```
 
 ## The "flow" task
@@ -26,10 +26,10 @@ _Run this task with the `grunt flow` command._
 
 This tasks requires Flow to be installed on your system. It's currently only available on OSX and linux. Detailed instructions can be found on the [Getting Started](http://flowtype.org/docs/getting-started.html) page. For OSX users, the fastest way to install is using [Brew](http://brew.sh).
 
-````
+```shell
 brew update
 brew install flow
-````
+```
 
 
 ### Overview

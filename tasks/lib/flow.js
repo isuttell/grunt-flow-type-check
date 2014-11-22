@@ -1,6 +1,6 @@
 /*
- * grunt-flow
- * https://github.com/isuttell/grunt-flow
+ * grunt-flow-type-check
+ * https://github.com/isuttell/grunt-flow-type-check
  *
  * Copyright (c) 2014 Isaac Suttell
  * Licensed under the MIT license.
@@ -22,7 +22,7 @@ exports.init = function(grunt) {
         grunt.warn(
           'You need to have Flow installed ' +
           'and in your system PATH for this task to work. ' +
-          'More info: https://github.com/isuttell/grunt-flow'
+          'More info: https://github.com/isuttell/grunt-flow-type-check'
         );
       }
 

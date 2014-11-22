@@ -1,6 +1,6 @@
 /*
- * grunt-flow
- * https://github.com/isuttell/grunt-flow
+ * grunt-flow-type-check
+ * https://github.com/isuttell/grunt-flow-type-check
  *
  * Copyright (c) 2014 Isaac Suttell
  * Licensed under the MIT license.

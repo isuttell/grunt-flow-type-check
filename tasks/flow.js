@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 
     var callback = this.async();
 
-    var args = ['flow', 'check', options.configFile];
+    var args = ['check', options.configFile];
     var opts = {};
 
     if (options.json) {

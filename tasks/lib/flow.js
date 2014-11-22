@@ -8,11 +8,24 @@
 
 'use strict';
 
+var os = require('os');
+var which = require('./which');
+
 exports.init = function(grunt) {
 
   exports.run = function(args, opts, done) {
+    // Is Flow installed?
+    var cmd = which('flow');
+
+    // If not, and we're on mac use a version in the repo
+    if(!cmd && os.platform() === 'darwin') {
+      cmd = './bin/flow';
+    } else if(!cmd) {
+      cmd = 'flow';
+    }
+
     var child = grunt.util.spawn({
-      cmd: args.shift(),
+      cmd: cmd,
       args: args,
       opts: opts
     }, function(err, result, code) {

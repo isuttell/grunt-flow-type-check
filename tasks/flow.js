@@ -23,14 +23,14 @@ module.exports = function(grunt) {
     var args = ['flow', 'check', options.configFile];
     var opts = {};
 
-    if(options.json) {
+    if (options.json) {
       args.push('--json');
     } else {
       opts.stdio = 'inherit';
     }
 
-    flow.run(args, opts, function(err, output){
-      if(output) {
+    flow.run(args, opts, function(err, output) {
+      if (output) {
         grunt.log.writeln(JSON.stringify(output));
       }
       callback(err);

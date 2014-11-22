@@ -23,9 +23,22 @@ module.exports = function(grunt) {
       }
     },
 
+    jscs: {
+      options: {
+        config: '.jscsrc'
+      },
+      all: {
+        src: [
+          'Gruntfile.js',
+          'tasks/*.js',
+          '<%= nodeunit.tests %>'
+        ]
+      }
+    },
+
     // Configuration to be run (and then tested).
     flow: {
-      default_options: {
+      default: {
         options: {
           configFile: 'test/fixtures'
         }
@@ -50,11 +63,12 @@ module.exports = function(grunt) {
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['jshint']);
+  grunt.registerTask('test', ['jshint', 'jscs']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

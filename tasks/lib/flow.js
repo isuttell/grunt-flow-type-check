@@ -15,7 +15,7 @@ exports.init = function(grunt) {
       cmd: args.shift(),
       args: args,
       opts: opts
-    }, function (err, result, code) {
+    }, function(err, result, code) {
       var output = false;
 
       if (code === 127) {
@@ -27,12 +27,12 @@ exports.init = function(grunt) {
       }
 
       // options.json === true
-      if(args.indexOf('--json') > -1) {
+      if (args.indexOf('--json') > -1) {
         output = JSON.parse(result.stdout);
       }
 
       // Fail if we find errors
-      if(code === 2) {
+      if (code === 2) {
         return done(false, output);
       }
 

@@ -4,7 +4,7 @@
 
 [![Build Status](http://img.shields.io/travis/isuttell/grunt-flow-type-check.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow-type-check)
 [![Peer Dependencies](http://img.shields.io/david/peer/webcomponents/generator-element.svg?style=flat)](https://david-dm.org/isuttell/grunt-flow-type-check#info=peerDependencies)
-[![npm Release](http://img.shields.io/npm/v/grunt-flow-type-checker.svg?style=flat)](https://github.com/isuttell/grunt-flow-type-check/releases)
+[![npm Release](http://img.shields.io/npm/v/grunt-flow-type-check.svg?style=flat)](https://github.com/isuttell/grunt-flow-type-check/releases)
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`

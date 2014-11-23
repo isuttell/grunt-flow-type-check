@@ -15,7 +15,7 @@ module.exports = function(grunt) {
     jshint: {
       all: [
         'Gruntfile.js',
-        'tasks/*.js',
+        'tasks/**/*.js',
         '<%= nodeunit.tests %>'
       ],
       options: {
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
       all: {
         src: [
           'Gruntfile.js',
-          'tasks/*.js',
+          'tasks/**/*.js',
           '<%= nodeunit.tests %>'
         ]
       }
@@ -65,6 +65,14 @@ module.exports = function(grunt) {
 
     // For testing watch support
     watch : {
+      task: {
+        files: [
+          'Gruntfile.js',
+          'tasks/**/*.js',
+          '<%= nodeunit.tests %>'
+        ],
+        tasks: ['test']
+      },
       flow: {
         files: ['test/fixtures/**/*.jsx'],
         tasks: ['flow:watch:status']
@@ -89,6 +97,6 @@ module.exports = function(grunt) {
   grunt.registerTask('testWatch', ['flow:watch:start', 'watch']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['test']);
+  grunt.registerTask('default', ['watch:task']);
 
 };

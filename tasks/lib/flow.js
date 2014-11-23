@@ -18,11 +18,11 @@ exports.init = function(grunt) {
     var cmd = which('flow');
 
     // If not, try using the binary in the repo
-    if(!cmd && os.platform() === 'linux') {
+    if (!cmd && os.platform() === 'linux') {
       cmd = './bin/linux/flow';
-    } else if(!cmd && os.platform() === 'darwin') {
+    } else if (!cmd && os.platform() === 'darwin') {
       cmd = './bin/osx/flow';
-    } else if(!cmd) {
+    } else if (!cmd) {
       cmd = 'flow';
     }
 
@@ -30,7 +30,7 @@ exports.init = function(grunt) {
     grunt.verbose.writeln('Running ' + cmd + ' ' + args.join(' '));
 
     // Spawn a child to run flow
-    var child = grunt.util.spawn({
+    grunt.util.spawn({
       cmd: cmd,
       args: args,
       opts: opts
@@ -59,7 +59,7 @@ exports.init = function(grunt) {
 
       return done(true, output);
     });
-  }
+  };
 
   return exports;
 };

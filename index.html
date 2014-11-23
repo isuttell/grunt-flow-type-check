@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Grunt-flow-type-check : Grunt task to run Flow type checking">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Grunt-flow-type-check</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/isuttell/grunt-flow-type-check">View on GitHub</a>
+
+          <h1 id="project_title">Grunt-flow-type-check</h1>
+          <h2 id="project_tagline">Grunt task to run Flow type checking</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/isuttell/grunt-flow-type-check/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/isuttell/grunt-flow-type-check/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="grunt-flow-type-check" class="anchor" href="#grunt-flow-type-check" aria-hidden="true"><span class="octicon octicon-link"></span></a>grunt-flow-type-check</h1>
+
+<blockquote>
+<p>Run Facebook's Flow static type checker</p>
+</blockquote>
+
+<p><a href="https://travis-ci.org/isuttell/grunt-flow-type-check"><img src="http://img.shields.io/travis/isuttell/grunt-flow-type-check.svg?style=flat" alt="Build Status"></a>
+<a href="https://david-dm.org/isuttell/grunt-flow-type-check#info=peerDependencies"><img src="http://img.shields.io/david/peer/webcomponents/generator-element.svg?style=flat" alt="Peer Dependencies"></a>
+<a href="https://github.com/isuttell/grunt-flow-type-check/releases"><img src="http://img.shields.io/npm/v/grunt-flow-type-checker.svg?style=flat" alt="npm Release"></a></p>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>This plugin requires Grunt <code>~0.4.5</code></p>
+
+<p>If you haven't used <a href="http://gruntjs.com/">Grunt</a> before, be sure to check out the <a href="http://gruntjs.com/getting-started">Getting Started</a> guide, as it explains how to create a <a href="http://gruntjs.com/sample-gruntfile">Gruntfile</a> as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:</p>
+
+<div class="highlight highlight-shell"><pre>npm install grunt-flow-type-check --save-dev</pre></div>
+
+<p>Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:</p>
+
+<div class="highlight highlight-js"><pre>grunt.loadNpmTasks(<span class="pl-s1"><span class="pl-pds">'</span>grunt-flow-type-check<span class="pl-pds">'</span></span>);</pre></div>
+
+<h2>
+<a id="the-flow-task" class="anchor" href="#the-flow-task" aria-hidden="true"><span class="octicon octicon-link"></span></a>The "flow" task</h2>
+
+<p><em>Run this task with the <code>grunt flow</code> command.</em></p>
+
+<p><a href="http://flowtype.org">Flow</a> is a static type checker, designed to find type errors in JavaScript programs. Typed Flow code easily transforms down to regular JavaScript, so it runs anywhere.</p>
+
+<p>This tasks requires Flow to be installed on your system. It's currently only available on OSX and linux. Detailed instructions can be found on the <a href="http://flowtype.org/docs/getting-started.html">Getting Started</a> page. For OSX users, the fastest way to install is using <a href="http://brew.sh">Brew</a>.</p>
+
+<div class="highlight highlight-shell"><pre>brew update
+brew install flow</pre></div>
+
+<h3>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h3>
+
+<p>In your project's Gruntfile, add a section named <code>flow</code> to the data object passed into <code>grunt.initConfig()</code>.</p>
+
+<div class="highlight highlight-js"><pre>grunt.initConfig({
+  flow<span class="pl-k">:</span> {
+    options<span class="pl-k">:</span> {
+      <span class="pl-c">// Task-specific options go here.</span>
+      configFile<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">'</span>.<span class="pl-pds">'</span></span>
+    },
+    check<span class="pl-k">:</span> {
+      options<span class="pl-k">:</span> {
+        background<span class="pl-k">:</span> <span class="pl-c1">false</span>
+      }
+    }
+  }
+});</pre></div>
+
+<h3>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h3>
+
+<h4>
+<a id="optionsconfigfile" class="anchor" href="#optionsconfigfile" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.configFile</h4>
+
+<p>Type: <code>String</code>
+Default value: <code>'.'</code></p>
+
+<p>The directory where <code>.flowconfig</code> is located.</p>
+
+<h4>
+<a id="optionsbackground" class="anchor" href="#optionsbackground" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.background</h4>
+
+<p>Type: <code>Boolean</code>
+Default value: <code>false</code></p>
+
+<p>Run the Flow server in the background. This is used in conjunction with watch.</p>
+
+<h3>
+<a id="usage-examples" class="anchor" href="#usage-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage Examples</h3>
+
+<h4>
+<a id="default-options" class="anchor" href="#default-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default Options</h4>
+
+<p>By default we check for <code>.flowconfig</code> in the root directory and then run <code>flow check</code></p>
+
+<div class="highlight highlight-js"><pre>grunt.initConfig({
+  flow<span class="pl-k">:</span> {
+    options<span class="pl-k">:</span> {},
+  },
+});</pre></div>
+
+<h4>
+<a id="watch" class="anchor" href="#watch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Watch</h4>
+
+<p>Running <code>flow check</code> each time can be slow. Alternatively, you can run the Flow server in the background and use <a href="https://github.com/gruntjs/grunt-contrib-watch">grunt-contrib-watch</a> to get any current errors when a files changes.</p>
+
+<div class="highlight highlight-js"><pre>grunt.initConfig({
+  flow<span class="pl-k">:</span> {
+    options<span class="pl-k">:</span> {
+      configFile<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">'</span>.<span class="pl-pds">'</span></span>
+    },
+    watch<span class="pl-k">:</span> {
+      options<span class="pl-k">:</span> {
+        <span class="pl-c">// Task-specific options go here.</span>
+        background<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+      }
+    }
+  },
+  watch <span class="pl-k">:</span> {
+      flow<span class="pl-k">:</span> {
+        files<span class="pl-k">:</span> [<span class="pl-s1"><span class="pl-pds">'</span>src/**/*.jsx<span class="pl-pds">'</span></span>],
+        tasks<span class="pl-k">:</span> [<span class="pl-s1"><span class="pl-pds">'</span>flow:watch:status<span class="pl-pds">'</span></span>] <span class="pl-c">// Get the status from the server</span>
+      }
+    }
+});
+
+<span class="pl-c">// Run 'flow:watch:start' before the watch task to start the server</span>
+grunt.registerTask(<span class="pl-s1"><span class="pl-pds">'</span>watchFlow<span class="pl-pds">'</span></span>, [<span class="pl-s1"><span class="pl-pds">'</span>flow:watch:start<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>watch<span class="pl-pds">'</span></span>]);</pre></div>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.</p>
+
+<h2>
+<a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release History</h2>
+
+<ul>
+<li>v0.2.0 - Added watch support</li>
+<li>v0.1.0 - Initial Release</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Grunt-flow-type-check maintained by <a href="https://github.com/isuttell">isuttell</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-56331929-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>

@@ -33,7 +33,6 @@ brew update
 brew install flow
 ```
 
-
 ### Overview
 In your project's Gruntfile, add a section named `flow` to the data object passed into `grunt.initConfig()`.
 
@@ -51,33 +50,6 @@ grunt.initConfig({
     }
   }
 });
-```
-### Watch
-Running `flow check` each time can be slow. Alternatively, you can run the Flow server in the background and use [grunt-contrib-watch](https://github.com/gruntjs/grunt-contrib-watch) to get any current errors when a files changes.
-
-```js
-grunt.initConfig({
-  flow: {
-    options: {
-      configFile: '.'
-    },
-    watch: {
-      options: {
-        // Task-specific options go here.
-        background: true,
-      }
-    }
-  },
-  watch : {
-      flow: {
-        files: ['src/**/*.jsx'],
-        tasks: ['flow:watch:status'] // Get the status from the server
-      }
-    }
-});
-
-// Run 'flow:watch:start' before the watch task to start the server
-grunt.registerTask('watchFlow', ['flow:watch:start', 'watch']);
 ```
 
 ### Options
@@ -107,21 +79,36 @@ grunt.initConfig({
 });
 ```
 
-#### Custom Options
-In this example, `.flowconfig` is located in the `src/` directory of the project.
+#### Watch
+Running `flow check` each time can be slow. Alternatively, you can run the Flow server in the background and use [grunt-contrib-watch](https://github.com/gruntjs/grunt-contrib-watch) to get any current errors when a files changes.
 
 ```js
 grunt.initConfig({
   flow: {
     options: {
-      configFile: 'src/'
+      configFile: '.'
+    },
+    watch: {
+      options: {
+        // Task-specific options go here.
+        background: true,
+      }
     }
   },
+  watch : {
+      flow: {
+        files: ['src/**/*.jsx'],
+        tasks: ['flow:watch:status'] // Get the status from the server
+      }
+    }
 });
+
+// Run 'flow:watch:start' before the watch task to start the server
+grunt.registerTask('watchFlow', ['flow:watch:start', 'watch']);
 ```
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.
 
 ## Release History
 * v0.2.0 - Added watch support

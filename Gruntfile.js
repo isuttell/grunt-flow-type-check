@@ -38,15 +38,22 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     flow: {
-      default: {
+      options: {
+        configFile: 'test/fixtures'
+      },
+      single: {
         options: {
-          configFile: 'test/fixtures'
+          background: false
         }
       },
       json: {
         options: {
-          json: true,
-          configFile: 'test/fixtures'
+          json: true
+        }
+      },
+      watch: {
+        options: {
+          background: true
         }
       }
     },
@@ -54,6 +61,15 @@ module.exports = function(grunt) {
     // Unit tests.
     nodeunit: {
       tests: ['test/*_test.js']
+    },
+
+    // For testing watch support
+    watch : {
+      flow: {
+        files: ['test/fixtures/**/*.jsx'],
+        tasks: ['flow:watch:status']
+      }
+
     }
 
   });
@@ -65,12 +81,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
   grunt.registerTask('test', ['jshint', 'jscs', 'nodeunit']);
+  grunt.registerTask('testWatch', ['flow:watch:start', 'watch']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('default', ['test']);
 
 };

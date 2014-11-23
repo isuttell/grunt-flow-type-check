@@ -26,13 +26,19 @@ exports.init = function(grunt) {
       cmd = 'flow';
     }
 
+    // Inform us what we're running
+    grunt.verbose.writeln('Running ' + cmd + ' ' + args.join(' '));
+
+    // Spawn a child to run flow
     var child = grunt.util.spawn({
       cmd: cmd,
       args: args,
       opts: opts
     }, function(err, result, code) {
+      // By default we have no stdout, its pulled from stdio
       var output = false;
 
+      // Code 127 means we can't find any version for flow that works
       if (code === 127) {
         grunt.warn(
           'You need to have Flow installed ' +

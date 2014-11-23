@@ -4,7 +4,7 @@
 
 [![Build Status](http://img.shields.io/travis/isuttell/grunt-flow-type-check.svg?style=flat)](https://travis-ci.org/isuttell/grunt-flow-type-check)
 [![Peer Dependencies](http://img.shields.io/david/peer/webcomponents/generator-element.svg?style=flat)](https://david-dm.org/isuttell/grunt-flow-type-check#info=peerDependencies)
-[![Github Release](http://img.shields.io/github/release/isuttell/grunt-flow-type-check.svg?style=flat)](https://github.com/isuttell/grunt-flow-type-check/releases)
+[![npm Release](http://img.shields.io/npm/v/grunt-flow-type-checker.svg?style=flat)](https://github.com/isuttell/grunt-flow-type-check/releases)
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -44,11 +44,40 @@ grunt.initConfig({
       // Task-specific options go here.
       configFile: '.'
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
+    check: {
+      options: {
+        background: false
+      }
+    }
+  }
 });
+```
+### Watch
+Running `flow check` each time can be slow. Alternatively, you can run the Flow server in the background and use [grunt-contrib-watch](https://github.com/gruntjs/grunt-contrib-watch) to get any current errors when a files changes.
+
+```js
+grunt.initConfig({
+  flow: {
+    options: {
+      configFile: '.'
+    },
+    watch: {
+      options: {
+        // Task-specific options go here.
+        background: true,
+      }
+    }
+  },
+  watch : {
+      flow: {
+        files: ['src/**/*.jsx'],
+        tasks: ['flow:watch:status'] // Get the status from the server
+      }
+    }
+});
+
+// Run 'flow:watch:start' before the watch task to start the server
+grunt.registerTask('watchFlow', ['flow:watch:start', 'watch']);
 ```
 
 ### Options
@@ -58,6 +87,12 @@ Type: `String`
 Default value: `'.'`
 
 The directory where `.flowconfig` is located.
+
+#### options.background
+Type: `Boolean`
+Default value: `false`
+
+Run the Flow server in the background. This is used in conjunction with watch.
 
 ### Usage Examples
 
@@ -79,7 +114,7 @@ In this example, `.flowconfig` is located in the `src/` directory of the project
 grunt.initConfig({
   flow: {
     options: {
-      src: 'src/'
+      configFile: 'src/'
     }
   },
 });
@@ -89,4 +124,5 @@ grunt.initConfig({
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+* v0.2.0 - Added watch support
 * v0.1.0 - Initial Release

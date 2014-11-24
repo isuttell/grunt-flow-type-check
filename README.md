@@ -112,5 +112,6 @@ grunt.registerTask('watchFlow', ['flow:watch:start', 'watch']);
 Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.
 
 ## Release History
+* v0.2.1 - Fixed path issue for Flow binaries
 * v0.2.0 - Added watch support
 * v0.1.0 - Initial Release

@@ -60,7 +60,7 @@ module.exports = function(grunt) {
     if (options.background === true) {
       // When we catch CTRL+C kill the flow server
       process.on('SIGINT', function() {
-        args.push('stop');
+        args = ['stop', options.configFile];
         flow.run(args, opts, function(err, output) {
           process.kill();
         });

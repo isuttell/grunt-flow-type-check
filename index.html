@@ -65,13 +65,17 @@ brew install flow</pre></div>
 
 <div class="highlight highlight-js"><pre>grunt.initConfig({
   flow<span class="pl-k">:</span> {
-    options<span class="pl-k">:</span> {
-      <span class="pl-c">// Task-specific options go here.</span>
-      configFile<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">'</span>.<span class="pl-pds">'</span></span>
-    },
-    check<span class="pl-k">:</span> {
+    app<span class="pl-k">:</span> {
+      src<span class="pl-k">:</span> <span class="pl-c1">'.',</span>
       options<span class="pl-k">:</span> {
-        background<span class="pl-k">:</span> <span class="pl-c1">false</span>
+        background<span class="pl-k">:</span> <span class="pl-c1">false</span>,    // Watch/Server mode
+        all<span class="pl-k">:</span> <span class="pl-c1">false</span>,           // Check all files regardless
+        lib<span class="pl-k">:</span> <span class="pl-c1">''</span>,              // Library directory
+        module<span class="pl-k">:</span> <span class="pl-c1">''</span>,           // Module mode
+        weak<span class="pl-k">:</span> <span class="pl-c1">false</span>,          // Force weak check
+        profile<span class="pl-k">:</span> <span class="pl-c1">false</span>,       // Turn on profiling
+        stripRoot<span class="pl-k">:</span> <span class="pl-c1">false</span>,     // Display relative paths
+        showAllErrors<span class="pl-k">:</span> <span class="pl-c1">false</span>, // Show more than 50 errors
       }
     }
   }
@@ -81,12 +85,60 @@ brew install flow</pre></div>
 <a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h3>
 
 <h4>
-<a id="optionsconfigfile" class="anchor" href="#optionsconfigfile" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.configFile</h4>
+<a id="src" class="anchor" href="#src" aria-hidden="true"><span class="octicon octicon-link"></span></a>src</h4>
 
 <p>Type: <code>String</code>
 Default value: <code>'.'</code></p>
 
 <p>The directory where <code>.flowconfig</code> is located.</p>
+
+<h4>
+<a id="optionsweak" class="anchor" href="#optionsweak" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.weak</h4>
+
+<p>Type: <code>Boolean</code>
+Default value: <code>false</code></p>
+
+<p>Use the weak option to check the files.</p>
+
+<h4>
+<a id="optionsshowallerrors" class="anchor" href="#optionsshowallerrors" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.showAllErrors</h4>
+
+<p>Type: <code>Boolean</code>
+Default value: <code>false</code></p>
+
+<p>By default only the first 50 errors are shown. This will show all of them.</p>
+
+<h4>
+<a id="optionslib" class="anchor" href="#optionslib" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.lib</h4>
+
+<p>Type: <code>String</code>
+Default value: <code>''</code></p>
+
+<p>Library folder. This can be defined here or in `flowconfig`.</p>
+
+<h4>
+<a id="optionsmodule" class="anchor" href="#optionsmodule" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.module</h4>
+
+<p>Type: <code>String</code>
+Default value: <code>''</code></p>
+
+<p>Module can either be <code>haste</code> or <code>node</code>.</p>
+
+<h4>
+<a id="optionsall" class="anchor" href="#optionsall" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.all</h4>
+
+<p>Type: <code>Boolean</code>
+Default value: <code>false</code></p>
+
+<p>Checks all files regardless of if they have <code>/* @flow */</code> at the top. Use this with care.</p>
+
+<h4>
+<a id="optionsprofile" class="anchor" href="#optionsprofile" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.profile</h4>
+
+<p>Type: <code>Boolean</code>
+Default value: <code>false</code></p>
+
+<p>Provide some basic profiling information on each run.</p>
 
 <h4>
 <a id="optionsbackground" class="anchor" href="#optionsbackground" aria-hidden="true"><span class="octicon octicon-link"></span></a>options.background</h4>
@@ -100,14 +152,22 @@ Default value: <code>false</code></p>
 <a id="usage-examples" class="anchor" href="#usage-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage Examples</h3>
 
 <h4>
-<a id="default-options" class="anchor" href="#default-options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default Options</h4>
+<a id="basic" class="anchor" href="#basic" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic</h4>
 
 <p>By default we check for <code>.flowconfig</code> in the root directory and then run <code>flow check</code></p>
 
 <div class="highlight highlight-js"><pre>grunt.initConfig({
   flow<span class="pl-k">:</span> {
-    options<span class="pl-k">:</span> {},
-  },
+    app<span class="pl-k">:</span> {
+      src<span class="pl-k">:</span> <span class="pl-c1">'.',</span>
+      options<span class="pl-k">:</span> {
+        module<span class="pl-k">:</span> <span class="pl-c1">'haste'</span>,
+        profile<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+        stripRoot<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+        showAllErrors<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+      }
+    }
+  }
 });</pre></div>
 
 <h4>
@@ -117,10 +177,8 @@ Default value: <code>false</code></p>
 
 <div class="highlight highlight-js"><pre>grunt.initConfig({
   flow<span class="pl-k">:</span> {
-    options<span class="pl-k">:</span> {
-      configFile<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">'</span>.<span class="pl-pds">'</span></span>
-    },
     watch<span class="pl-k">:</span> {
+      src<span class="pl-k">:</span> <span class="pl-s1"><span class="pl-pds">'</span>.<span class="pl-pds">',</span></span>
       options<span class="pl-k">:</span> {
         <span class="pl-c">// Task-specific options go here.</span>
         background<span class="pl-k">:</span> <span class="pl-c1">true</span>,
@@ -147,6 +205,8 @@ grunt.registerTask(<span class="pl-s1"><span class="pl-pds">'</span>watchFlow<sp
 <a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release History</h2>
 
 <ul>
+<li>v0.3.0 - Added additional arguments</li>
+<li>v0.2.1 - Fixed Incorrect Paths</li>
 <li>v0.2.0 - Added watch support</li>
 <li>v0.1.0 - Initial Release</li>
 </ul>

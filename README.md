@@ -59,6 +59,12 @@ grunt.initConfig({
 
 ### Options
 
+#### src
+Type: `String`
+Default value: `.`
+
+Default location of `.flowconfig`
+
 #### options.weak
 Type: `Boolean`
 Default value: `false`
@@ -152,5 +158,6 @@ Please take care to maintain the existing coding style. Add unit tests for any n
 
 ## Release History
 * v0.3.0 - Added additional options
+* v0.2.1 - Fixed incorrect paths
 * v0.2.0 - Added watch support
 * v0.1.0 - Initial Release

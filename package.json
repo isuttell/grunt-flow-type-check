@@ -1,7 +1,7 @@
 {
   "name": "grunt-flow-type-check",
   "description": "Run Facebooks Flow static type checker",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "homepage": "http://isuttell.github.io/grunt-flow-type-check/",
   "author": {
     "name": "Isaac Suttell",

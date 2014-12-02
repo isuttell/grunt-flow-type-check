@@ -8,6 +8,8 @@
 
 'use strict';
 
+var is = require('./lib/isType');
+
 module.exports = function(grunt) {
 
   // Flow control library
@@ -16,10 +18,18 @@ module.exports = function(grunt) {
   grunt.registerMultiTask('flow', 'Facebook\'s Flow static type checking', function() {
     // Default options
     var options = this.options({
-      configFile: '.',
+      lib: '',
       json: false,
-      background: false
+      background: false,
+      all: false,
+      showAllErrors: false,
+      timeout: -1,
+      stripRoot: false,
+      retries: -1,
+      module: ''
     });
+
+    var bg = !!options.background;
 
     // This task is asynchronous
     var callback = this.async();
@@ -33,19 +43,53 @@ module.exports = function(grunt) {
     // Figure out what command to run
     var commands = ['start', 'status', 'stop', 'check'];
     if (commands.indexOf(this.args[0]) > -1) {
-      args.push(this.args);
+      args.push(this.args[0]);
     } else {
       // Default to a basic full check
       args.push('check');
     }
 
     // Where is `.flowconfig`
-    args.push(options.configFile);
+    args.push(this.filesSrc.join(' '));
 
     // Enable json output - mostly for testing
-    if (options.json) {
+    if (is.typeBoolean(options.json) && options.json) {
       args.push('--json');
       delete opts.stdio;
+    }
+
+    var booleanArgs = {
+      all: '--all',
+      weak: '--weak',
+      profile: '--profile',
+      stripRoot: '--strip-root',
+      showAllErrors: '--show-all-errors'
+    };
+
+    var variableArgs = {
+      'lib' : '--lib',
+      'module' : '--module',
+      'timeout' : '--timeout',
+      'retries' : '--retries',
+    };
+
+    var i;
+
+    if (args[0] !== 'status') {
+      // Check for positive boolean arguments
+      for (i in booleanArgs) {
+        if (options.hasOwnProperty(i) && is.typeBoolean(options[i]) && options[i]) {
+          args.push(booleanArgs[i]);
+        }
+      }
+
+      // Check for arguments that take actual input
+      for (i in variableArgs) {
+        if (options.hasOwnProperty(i) && options[i].length > 0) {
+          args.push('--' + i);
+          args.push(options[i]);
+        }
+      }
     }
 
     // Run it
@@ -60,7 +104,7 @@ module.exports = function(grunt) {
     if (options.background === true) {
       // When we catch CTRL+C kill the flow server
       process.on('SIGINT', function() {
-        args.push('stop');
+        args = ['stop'];
         flow.run(args, opts, function(err, output) {
           process.kill();
         });

@@ -40,13 +40,17 @@ In your project's Gruntfile, add a section named `flow` to the data object passe
 ```js
 grunt.initConfig({
   flow: {
-    options: {
-      // Task-specific options go here.
-      configFile: '.'
-    },
-    check: {
+    app: {
+      src: 'src/',            // `.flowconfig` folder
       options: {
-        background: false
+        background: false,    // Watch/Server mode
+        all: false,           // Check all files regardless
+        lib: '',              // Library directory
+        module: '',           // Module mode
+        weak: false,          // Force weak check
+        profile: false,       // Turn on profiling
+        stripRoot: false,     // Display relative paths
+        showAllErrors: false, // Show more than 50 errors
       }
     }
   }
@@ -55,11 +59,47 @@ grunt.initConfig({
 
 ### Options
 
-#### options.configFile
+#### src
 Type: `String`
-Default value: `'.'`
+Default value: `.`
 
-The directory where `.flowconfig` is located.
+Default location of `.flowconfig`
+
+#### options.weak
+Type: `Boolean`
+Default value: `false`
+
+Use the weak option to check the files.
+
+#### options.lib
+Type: `String`
+Default value: ``
+
+Library folder. This can be defined here or in `flowconfig`.
+
+#### options.showAllErrors
+Type: `Boolean`
+Default value: `false`
+
+By default only the first 50 errors are shown. This will show all of them.
+
+#### options.module
+Type: `String`
+Default value: ``
+
+Module can either be `haste` or `node`.
+
+#### options.profile
+Type: `Boolean`
+Default value: `false`
+
+Provide some basic profiling information on each run.
+
+#### options.all
+Type: `Boolean`
+Default value: `false`
+
+Checks all files regardless of if they have `/* @flow */` at the top. Use this with care.
 
 #### options.background
 Type: `Boolean`
@@ -69,13 +109,20 @@ Run the Flow server in the background. This is used in conjunction with watch.
 
 ### Usage Examples
 
-#### Default Options
+#### Basic
 By default we check for `.flowconfig` in the root directory and then run `flow check`
 
 ```js
 grunt.initConfig({
   flow: {
-    options: {},
+    app: {
+      src: '.',
+      options: {
+        background: false,
+        stripRoot: true,
+        profile: true
+      }
+    }
   },
 });
 ```
@@ -86,13 +133,11 @@ Running `flow check` each time can be slow. Alternatively, you can run the Flow 
 ```js
 grunt.initConfig({
   flow: {
-    options: {
-      configFile: '.'
-    },
     watch: {
+      src: '.',
       options: {
         // Task-specific options go here.
-        background: true,
+        background: true
       }
     }
   },
@@ -112,6 +157,7 @@ grunt.registerTask('watchFlow', ['flow:watch:start', 'watch']);
 Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.
 
 ## Release History
+* v0.3.0 - Added additional options
 * v0.2.1 - Fixed path issue for Flow binaries
 * v0.2.0 - Added watch support
 * v0.1.0 - Initial Release

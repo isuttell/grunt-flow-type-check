@@ -47,17 +47,32 @@ exports.init = function(grunt) {
    *
    * @param     {Array}       args    Arguments to pass directly to Flow
    * @param     {Object}      opts    spawn process options
+   * @param     {Object}      input   (optional) input to pass to child
    * @param     {Function}    done    Callback when done
    */
-  exports.run = function(args, opts, done) {
+  exports.run = function(args, opts, input, done) {
+    if (typeof input === 'function' && typeof done === 'undefined') {
+      done = input;
+    } else {
+      opts = {}; // Disable stdio inherit
+    }
+
     // Is Flow installed on this system?
-    var cmd = which('flow');
+    for (var i = 0; i < args.length; i++) {
+      if (args[i] === 'flow') {
+        args[i] = which('flow');
+        break;
+      }
+    }
+    // Strip cmd from args array
+    var cmd = args[0];
+    args.splice(0, 1);
 
     // Inform us what we're running
     grunt.verbose.writeln('Running ' + cmd + ' ' + args.join(' '));
 
     // Spawn a child to run flow
-    grunt.util.spawn({
+    var child = grunt.util.spawn({
       cmd: cmd,
       args: args,
       opts: opts
@@ -68,6 +83,8 @@ exports.init = function(grunt) {
       // Conver to json (options.json === true)
       if ((code === 0 || code === 2) && args.indexOf('--json') > -1) {
         output = JSON.parse(result.stdout);
+      } else if ((code === 0 || code === 2) && typeof input === 'string') {
+        output = result.stdout;
       }
 
       // Code 127 means we can't find any version for flow that works
@@ -83,6 +100,14 @@ exports.init = function(grunt) {
         return done(false, output);
       }
     });
+
+    // Pipe a single files contents to process
+    if (typeof input === 'string') {
+      child.stderr.pipe(process.stderr);
+      child.stdin.write(input, 'UTF-8', function() {
+        child.stdin.end();
+      });
+    }
   };
 
   return exports;

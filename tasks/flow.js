@@ -9,6 +9,7 @@
 'use strict';
 
 var is = require('./lib/isType');
+var async = require('async');
 
 module.exports = function(grunt) {
 
@@ -35,7 +36,7 @@ module.exports = function(grunt) {
     var callback = this.async();
 
     // Default args and process options
-    var args = [];
+    var args = ['flow'];
     var opts = {
       stdio: 'inherit'
     };
@@ -50,7 +51,9 @@ module.exports = function(grunt) {
     }
 
     // Where is `.flowconfig`
-    args.push(this.filesSrc.join(' '));
+    if (is.typeString(this.data.src)) {
+      args.push(this.data.src);
+    }
 
     // Enable json output - mostly for testing
     if (is.typeBoolean(options.json) && options.json) {
@@ -67,10 +70,10 @@ module.exports = function(grunt) {
     };
 
     var variableArgs = {
-      'lib' : '--lib',
-      'module' : '--module',
-      'timeout' : '--timeout',
-      'retries' : '--retries',
+      'lib': '--lib',
+      'module': '--module',
+      'timeout': '--timeout',
+      'retries': '--retries',
     };
 
     var i;
@@ -92,19 +95,51 @@ module.exports = function(grunt) {
       }
     }
 
-    // Run it
-    flow.run(args, opts, function(err, output) {
-      if (output) {
-        grunt.log.writeln(JSON.stringify(output));
-      }
-      callback(err);
-    });
+    // If a file object is passed then manually check each file
+    if (is.typeObject(this.data.files)) {
+      // Cycle through each file
+      async.eachSeries(this.filesSrc, function(filepath, done) {
+        var contents = grunt.file.read(filepath);
+
+        // `flow check-contents` checks input from the stdin
+        args = ['flow', 'check-contents'];
+
+        // Only option available
+        if (options.showAllErrors === true) {
+          args.push('--show-all-errors');
+        }
+
+        // Run and pipe
+        flow.run(args, opts, contents, function(err, output) {
+          grunt.log.subhead('Results for ' + filepath);
+
+          // Add
+          output = output.replace(/-:/g, filepath + ':');
+
+          if (err === false) {
+            grunt.log.error(output + '\n');
+            done(err);
+          } else {
+            grunt.log.ok(output + '\n');
+            done();
+          }
+        });
+      }, callback);
+    } else {
+      // Run it the default flow command
+      flow.run(args, opts, function(err, output) {
+        if (output) {
+          grunt.log.writeln(JSON.stringify(output));
+        }
+        callback(err);
+      });
+    }
 
     // Stop the server
     if (options.background === true) {
       // When we catch CTRL+C kill the flow server
       process.on('SIGINT', function() {
-        args = ['stop'];
+        args = ['flow', 'stop'];
         flow.run(args, opts, function(err, output) {
           process.kill();
         });

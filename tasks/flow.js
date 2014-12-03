@@ -9,6 +9,7 @@
 'use strict';
 
 var is = require('./lib/isType');
+var style = require('./lib/style');
 var async = require('async');
 
 module.exports = function(grunt) {
@@ -20,7 +21,6 @@ module.exports = function(grunt) {
     // Default options
     var options = this.options({
       lib: '',
-      json: false,
       background: false,
       all: false,
       showAllErrors: false,
@@ -37,9 +37,7 @@ module.exports = function(grunt) {
 
     // Default args and process options
     var args = ['flow'];
-    var opts = {
-      stdio: 'inherit'
-    };
+    var opts = {};
 
     // Figure out what command to run
     var commands = ['start', 'status', 'stop', 'check'];
@@ -55,11 +53,8 @@ module.exports = function(grunt) {
       args.push(this.data.src);
     }
 
-    // Enable json output - mostly for testing
-    if (is.typeBoolean(options.json) && options.json) {
-      args.push('--json');
-      delete opts.stdio;
-    }
+    // Output to json so we can style it ourselves
+    args.push('--json');
 
     var booleanArgs = {
       all: '--all',
@@ -95,44 +90,63 @@ module.exports = function(grunt) {
       }
     }
 
-    // If a file object is passed then manually check each file
-    if (is.typeObject(this.data.files)) {
-      // Cycle through each file
-      async.eachSeries(this.filesSrc, function(filepath, done) {
-        var contents = grunt.file.read(filepath);
+    /**
+     * Run the flow command either in loop or once
+     *
+     * @param     {Mixed}      filepath    Either a callback or path
+     * @param     {Function}   done        Callback
+     */
+    function runFlow(filepath, done) {
+      if (typeof filepath === 'function') {
+        done = filepath;
+        filepath = void 0;
+      }
+      var contents;
 
+      // If we have a file path read it and setup flow to ingest it
+      if (filepath) {
+        contents = grunt.file.read(filepath);
         // `flow check-contents` checks input from the stdin
-        args = ['flow', 'check-contents'];
+        args = ['flow', 'check-contents', '--json'];
 
         // Only option available
         if (options.showAllErrors === true) {
           args.push('--show-all-errors');
         }
+      }
 
-        // Run and pipe
-        flow.run(args, opts, contents, function(err, output) {
+      // Run and pipe
+      flow.run(args, opts, contents, function(err, output) {
+        if (typeof output === 'string') { output = JSON.parse(output); }
+
+        if (filepath) {
           grunt.log.subhead('Results for ' + filepath);
-
-          // Add
-          output = output.replace(/-:/g, filepath + ':');
-
-          if (err === false) {
-            grunt.log.error(output + '\n');
-            done(err);
-          } else {
-            grunt.log.ok(output + '\n');
-            done();
-          }
-        });
-      }, callback);
-    } else {
-      // Run it the default flow command
-      flow.run(args, opts, function(err, output) {
-        if (output) {
-          grunt.log.writeln(JSON.stringify(output));
+        } else {
+          grunt.log.subhead('Results');
         }
-        callback(err);
+
+        // Stlye the output
+        var formatted = style(output, filepath);
+
+        if (output.passed === false) {
+          grunt.log.error(formatted + '\n');
+          done(false);
+        } else if (output.passed === true) {
+          grunt.log.ok(formatted + '\n');
+          done();
+        } else {
+          done(false);
+        }
       });
+    }
+
+    // If a file object is passed then manually check each file
+    if (is.typeObject(this.data.files)) {
+      // Cycle through each file
+      async.eachSeries(this.filesSrc, runFlow, callback);
+    } else if (is.typeString(this.data.src)) {
+      // Skip loop if we're running normally
+      runFlow(callback);
     }
 
     // Stop the server

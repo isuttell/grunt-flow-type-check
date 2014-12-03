@@ -51,12 +51,6 @@ exports.init = function(grunt) {
    * @param     {Function}    done    Callback when done
    */
   exports.run = function(args, opts, input, done) {
-    if (typeof input === 'function' && typeof done === 'undefined') {
-      done = input;
-    } else {
-      opts = {}; // Disable stdio inherit
-    }
-
     // Is Flow installed on this system?
     for (var i = 0; i < args.length; i++) {
       if (args[i] === 'flow') {
@@ -64,12 +58,13 @@ exports.init = function(grunt) {
         break;
       }
     }
+
     // Strip cmd from args array
     var cmd = args[0];
     args.splice(0, 1);
 
     // Inform us what we're running
-    grunt.verbose.writeln('Running ' + cmd + ' ' + args.join(' '));
+    grunt.verbose.ok('Running ' + cmd + ' ' + args.join(' '));
 
     // Spawn a child to run flow
     var child = grunt.util.spawn({
@@ -81,9 +76,9 @@ exports.init = function(grunt) {
       var output = false;
 
       // Conver to json (options.json === true)
-      if ((code === 0 || code === 2) && args.indexOf('--json') > -1) {
-        output = JSON.parse(result.stdout);
-      } else if ((code === 0 || code === 2) && typeof input === 'string') {
+      // if ((code === 0 || code === 2) && args.indexOf('--json') > -1) {
+      //   output = JSON.parse(result.stdout);
+      if (code === 0 || code === 2) {
         output = result.stdout;
       }
 

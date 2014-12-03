@@ -153,10 +153,29 @@ grunt.initConfig({
 grunt.registerTask('watchFlow', ['flow:watch:start', 'watch']);
 ```
 
+#### Single File
+You can also run a single file at a time through `flow`, however this it not recommended for projects with multiple files and/or external dependencies.
+
+```js
+grunt.initConfig({
+  flow: {
+    app: {
+      options: {
+        showAllErrors: false, // This the only option avaiable in this mode
+      },
+      files: {
+        src: ['src/**/*.js'] // Will run flow individually on each .js file in the src/ directory
+      }
+    }
+  },
+});
+```
+
 ## Contributing
 Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.
 
 ## Release History
+* v0.4.0 - Added single file check and colors
 * v0.3.0 - Added additional options
 * v0.2.1 - Fixed path issue for Flow binaries
 * v0.2.0 - Added watch support

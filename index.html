@@ -196,6 +196,24 @@ Default value: <code>false</code></p>
 <span class="pl-c">// Run 'flow:watch:start' before the watch task to start the server</span>
 grunt.registerTask(<span class="pl-s1"><span class="pl-pds">'</span>watchFlow<span class="pl-pds">'</span></span>, [<span class="pl-s1"><span class="pl-pds">'</span>flow:watch:start<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>watch<span class="pl-pds">'</span></span>]);</pre></div>
 
+<h4>
+<a id="single-file" class="anchor" href="#single-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Single File</h4>
+
+<p>You can also run a single file at a time through <code>flow</code>, however this it not recommended for projects with multiple files and/or external dependencies.</p>
+
+<div class="highlight highlight-js"><pre>grunt.initConfig({
+  flow<span class="pl-k">:</span> {
+    app<span class="pl-k">:</span> {
+      options<span class="pl-k">:</span> {
+        showAllErrors<span class="pl-k">:</span> <span class="pl-c1">false</span>, // This the only option avaiable in this mode
+      },
+      files<span class="pl-k">:</span> {
+        src<span class="pl-k">:</span> [<span class="pl-s1"><span class="pl-pds">'</span>src/**/*.jsx<span class="pl-pds">'</span></span>] // Will run flow individually on each .jsx file in the src/ directory
+      }
+    }
+  }
+});</pre></div>
+
 <h2>
 <a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
 
@@ -205,6 +223,7 @@ grunt.registerTask(<span class="pl-s1"><span class="pl-pds">'</span>watchFlow<sp
 <a id="release-history" class="anchor" href="#release-history" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release History</h2>
 
 <ul>
+<li>v0.4.0 - Added single file check and colors</li>
 <li>v0.3.0 - Added additional arguments</li>
 <li>v0.2.1 - Fixed path issue for Flow binaries</li>
 <li>v0.2.0 - Added watch support</li>

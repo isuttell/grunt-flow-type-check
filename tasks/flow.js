@@ -117,8 +117,6 @@ module.exports = function(grunt) {
 
       // Run and pipe
       flow.run(args, opts, contents, function(err, output) {
-        if (typeof output === 'string') { output = JSON.parse(output); }
-
         if (filepath) {
           grunt.log.subhead('Results for ' + filepath);
         } else {

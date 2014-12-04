@@ -80,6 +80,7 @@ exports.init = function(grunt) {
       //   output = JSON.parse(result.stdout);
       if (code === 0 || code === 2) {
         output = result.stdout;
+        if (typeof output === 'string') { output = JSON.parse(output); }
       }
 
       // Code 127 means we can't find any version for flow that works

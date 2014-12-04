@@ -30,10 +30,10 @@ exports.flow = {
   json: function(test) {
     test.expect(2);
 
-    var args = ['check', 'test/fixtures', '--json'];
+    var args = ['flow', 'check', 'test/fixtures', '--json'];
     var opts = {};
 
-    flowLib.run(args, opts, function(err, result) {
+    flowLib.run(args, opts, void 0, function(err, result) {
       test.equal(result.passed, false, 'There will be failures');
       test.equal(result.errors.length, 1, 'There should be one failure');
       test.done();

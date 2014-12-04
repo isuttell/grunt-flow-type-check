@@ -9,48 +9,58 @@
 var colors = require('colors/safe');
 
 module.exports = function(input, path) {
-  if (input.passed === true) {
-    return '0 Errors Found';
-  }
-  if (path === '.') {
-    path = void 0;
+  if (!input || (input && typeof input.passed === 'undefined')) {
+    return input;
   }
 
-  var errors = '';
+  // Success!
+  if (input.passed === true) { return '0 Errors Found'; }
 
+  // '.' indicates we're not running on a specific file
+  if (path === '.') { path = void 0; }
+
+  // Formatted string;
+  var errors = [];
+
+  // Loop through each error
   input.errors.forEach(function(error) {
     var descr;
 
-    errors += colors.magenta(path || error.message[0].path) + ':';
+    // File Path
+    errors.push(colors.magenta(path || error.message[0].path) + ':');
 
-    errors += colors.yellow(error.message[0].line.toString()) + ',';
-    errors += colors.cyan(error.message[0].start.toString()) + ',';
-    errors += colors.cyan(error.message[0].end.toString()) + ': ';
+    // Error Line/Position
+    errors.push(colors.yellow(error.message[0].line.toString()) + ',');
+    errors.push(colors.cyan(error.message[0].start.toString()) + ',');
+    errors.push(colors.cyan(error.message[0].end.toString()) + ': ');
 
-    // Split so we can color multiple lines
+    // Error Message - Split so we can color multiple lines
     descr = error.message[0].descr.split('\n');
     descr.forEach(function(item) {
-      errors += colors.red(item) + '\n';
+      errors.push(colors.red(item) + '\n');
     });
 
     // Some messages have a second line notifying where the error is
     if (error.message.length === 2) {
-      errors += '  ' + colors.green(path || error.message[1].path) + ':';
+      errors.push('  ' + colors.green(path || error.message[1].path) + ':');
 
-      errors += colors.yellow(error.message[1].line.toString()) + ',';
-      errors += colors.cyan(error.message[1].start.toString()) + ',';
-      errors += colors.cyan(error.message[1].end.toString()) + ': ';
+      errors.push(colors.yellow(error.message[1].line.toString()) + ',');
+      errors.push(colors.cyan(error.message[1].start.toString()) + ',');
+      errors.push(colors.cyan(error.message[1].end.toString()) + ': ');
 
-      errors += colors.green(error.message[1].descr) + '\n';
+      errors.push(colors.green(error.message[1].descr) + '\n');
     }
 
-    errors += '\n';
+    errors.push('\n');
   });
 
-  errors += 'Found ' + input.errors.length + ' error';
+  // Report How Many Errors
+  errors.push('Found ' + input.errors.length + ' error');
+
+  // Pluralize
   if (input.errors.length > 1) {
-    errors += 's';
+    errors.push('s');
   }
 
-  return errors;
+  return errors.join('');
 };

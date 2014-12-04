@@ -47,9 +47,8 @@ grunt.initConfig({
         all: false,           // Check all files regardless
         lib: '',              // Library directory
         module: '',           // Module mode
+        stripRoot: false,     // Relative vs Absolute paths
         weak: false,          // Force weak check
-        profile: false,       // Turn on profiling
-        stripRoot: false,     // Display relative paths
         showAllErrors: false, // Show more than 50 errors
       }
     }
@@ -83,17 +82,17 @@ Default value: `false`
 
 By default only the first 50 errors are shown. This will show all of them.
 
+#### options.stripRoot
+Type: `Boolean`
+Default value: `false`
+
+Use relative paths instead of absolute
+
 #### options.module
 Type: `String`
 Default value: ``
 
 Module can either be `haste` or `node`.
-
-#### options.profile
-Type: `Boolean`
-Default value: `false`
-
-Provide some basic profiling information on each run.
 
 #### options.all
 Type: `Boolean`
@@ -119,8 +118,6 @@ grunt.initConfig({
       src: '.',
       options: {
         background: false,
-        stripRoot: true,
-        profile: true
       }
     }
   },
@@ -175,6 +172,7 @@ grunt.initConfig({
 Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.
 
 ## Release History
+* v0.4.2 - Refactor and removed extraneous option
 * v0.4.1 - Fixed bug where watch didn't work
 * v0.4.0 - Added single file check, colors and Flow binaries to 0.1.2
 * v0.3.0 - Added additional options

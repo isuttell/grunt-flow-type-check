@@ -8,75 +8,48 @@
 
 'use strict';
 
-var is = require('./lib/isType');
 var style = require('./lib/style');
 var async = require('async');
+
+// Yes or not arguments to flow
+var booleanArgs = {
+  all: '--all',
+  weak: '--weak',
+  profile: '--profile', // Ignored since we're using json
+  stripRoot: '--strip-root',
+  showAllErrors: '--show-all-errors'
+};
+
+// Arguments that take input
+var variableArgs = {
+  'lib': '--lib',
+  'module': '--module',
+  'timeout': '--timeout',
+  'retries': '--retries',
+};
 
 module.exports = function(grunt) {
 
   // Flow control library
-  var flow = require('./lib/flow').init(grunt);
+  var flow = require('./lib/run').init(grunt);
 
-  grunt.registerMultiTask('flow', 'Facebook\'s Flow static type checking', function() {
-    // Default options
-    var options = this.options({
-      lib: '',
-      background: false,
-      all: false,
-      showAllErrors: false,
-      timeout: -1,
-      stripRoot: false,
-      retries: -1,
-      module: ''
-    });
-
-    // This task is asynchronous
-    var callback = this.async();
-
-    // Default args and process options
-    var args = [];
-    var opts = {};
-
-    // Figure out what command to run
-    var commands = ['start', 'status', 'stop', 'check'];
-    if (commands.indexOf(this.args[0]) > -1) {
-      args.push(this.args[0]);
-    } else {
-      // Default to a basic full check
-      args.push('check');
-    }
-
-    // Where is `.flowconfig`
-    if (is.typeString(this.data.src)) {
-      args.push(this.data.src);
-    }
-
-    if (args[0] === 'status' || args[0] === 'check') {
-      // Output to json so we can style it ourselves
+  function addJsonArg(args, options) {
+    // Output to json so we can style it ourselves
+    var jsonCommands = ['check', 'single', 'status'];
+    if (jsonCommands.indexOf(args[0]) > -1) {
       args.push('--json');
     }
+    return args;
+  }
 
-    var booleanArgs = {
-      all: '--all',
-      weak: '--weak',
-      profile: '--profile',
-      stripRoot: '--strip-root',
-      showAllErrors: '--show-all-errors'
-    };
-
-    var variableArgs = {
-      'lib': '--lib',
-      'module': '--module',
-      'timeout': '--timeout',
-      'retries': '--retries',
-    };
-
+  function addFlowArgs(args, options) {
     var i;
-
-    if (args[0] !== 'status') {
+    // Commands to control the server
+    var controlCommands = ['start', 'stop', 'check', 'single'];
+    if (controlCommands.indexOf(args[0]) > -1) {
       // Check for positive boolean arguments
       for (i in booleanArgs) {
-        if (options.hasOwnProperty(i) && is.typeBoolean(options[i]) && options[i]) {
+        if (options.hasOwnProperty(i) && grunt.util.kindOf(options[i]) === 'boolean' && options[i]) {
           args.push(booleanArgs[i]);
         }
       }
@@ -89,6 +62,48 @@ module.exports = function(grunt) {
         }
       }
     }
+    return args;
+  }
+
+  grunt.registerMultiTask('flow', 'Facebook\'s Flow static type checking', function() {
+    // Default options
+    var options = this.options({
+      lib: '',
+      background: false,
+      all: false,
+      showAllErrors: false,
+      timeout: -1,
+      stripRoot: false,
+      // profile: false,
+      retries: -1,
+      module: ''
+    });
+
+    // This task is asynchronous
+    var callback = this.async();
+
+    // Default args and process options
+    var args = [];
+
+    // Figure out what command to run
+    var commands = ['start', 'status', 'stop', 'check', 'single'];
+    if (commands.indexOf(this.args[0]) > -1) {
+      args.push(this.args[0]);
+    } else {
+      // Default to a basic full check
+      args.push('check');
+    }
+
+    // Where is `.flowconfig`
+    if (grunt.util.kindOf(this.data.src) === 'string') {
+      args.push(this.data.src);
+    }
+
+    // Add arguments for commands that output json
+    args = addJsonArg(args, options);
+
+    // Add arguments for for flow commands
+    args = addFlowArgs(args, options);
 
     /**
      * Run the flow command either in loop or once
@@ -97,7 +112,7 @@ module.exports = function(grunt) {
      * @param     {Function}   done        Callback
      */
     function runFlow(filepath, done) {
-      if (typeof filepath === 'function') {
+      if (grunt.util.kindOf(filepath) === 'function') {
         done = filepath;
         filepath = void 0;
       }
@@ -116,41 +131,38 @@ module.exports = function(grunt) {
       }
 
       // Run and pipe
-      flow.run(args, opts, contents, function(err, output) {
-        if (output === false) {
+      flow.run(args, {}, contents, function(err, output) {
+        if (output === false || grunt.util.kindOf(output) !== 'object') {
           return done(err);
         }
 
+        // Add subheads for any individual files
         if (filepath) {
           grunt.log.subhead('Results for ' + filepath);
         }
 
-        var formatted = output;
-
-        // Format the flow results
-        if (typeof output.passed !== 'undefined') {
-          formatted = style(output, filepath);
-        }
+        // Format the json from Flow
+        var formatted = style(output, filepath);
 
         // Log error/successes
-        if (output && output.passed === false) {
+        if (output.passed === false) {
           grunt.log.error(formatted + '\n');
-          done(false);
-        } else if (output && output.passed === true) {
+          return done(false);
+        } else if (output.passed === true) {
           grunt.log.ok(formatted + '\n');
-          done();
-        } else {
-          // Just complete is nothing else
-          done();
+          return done();
         }
+
+        // Just complete is nothing else
+        done();
       });
     }
 
     // If a file object is passed then manually check each file
-    if (is.typeObject(this.data.files)) {
+    if (grunt.util.kindOf(this.data.files) === 'object') {
       // Cycle through each file
       async.eachSeries(this.filesSrc, runFlow, callback);
-    } else if (is.typeString(this.data.src)) {
+    } else if (grunt.util.kindOf(this.data.src) === 'string') {
       // Skip loop if we're running normally
       runFlow(callback);
     }
@@ -160,7 +172,7 @@ module.exports = function(grunt) {
       // When we catch CTRL+C kill the flow server
       process.on('SIGINT', function() {
         args = ['stop'];
-        flow.run(args, opts, void 0, function(err, output) {
+        flow.run(args, {}, void 0, function(err, output) {
           process.kill();
         });
       });

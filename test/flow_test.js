@@ -1,7 +1,7 @@
 'use strict';
 
 var grunt = require('grunt');
-var flowLib = require('../tasks/lib/flow').init(grunt);
+var flowLib = require('../tasks/lib/run').init(grunt);
 /*
   ======== A Handy Little Nodeunit Reference ========
   https://github.com/caolan/nodeunit

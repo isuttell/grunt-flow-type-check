@@ -1,4 +1,4 @@
-/*
+ /*
  * grunt-flow-type-check
  * https://github.com/isuttell/grunt-flow-type-check
  *
@@ -36,7 +36,7 @@ module.exports = function(grunt) {
     var callback = this.async();
 
     // Default args and process options
-    var args = ['flow'];
+    var args = [];
     var opts = {};
 
     // Figure out what command to run
@@ -53,8 +53,10 @@ module.exports = function(grunt) {
       args.push(this.data.src);
     }
 
-    // Output to json so we can style it ourselves
-    args.push('--json');
+    if (args[0] === 'status' || args[0] === 'check') {
+      // Output to json so we can style it ourselves
+      args.push('--json');
+    }
 
     var booleanArgs = {
       all: '--all',
@@ -107,7 +109,7 @@ module.exports = function(grunt) {
       if (filepath) {
         contents = grunt.file.read(filepath);
         // `flow check-contents` checks input from the stdin
-        args = ['flow', 'check-contents', '--json'];
+        args = ['check-contents', '--json'];
 
         // Only option available
         if (options.showAllErrors === true) {
@@ -117,23 +119,31 @@ module.exports = function(grunt) {
 
       // Run and pipe
       flow.run(args, opts, contents, function(err, output) {
-        if (filepath) {
-          grunt.log.subhead('Results for ' + filepath);
-        } else {
-          grunt.log.subhead('Results');
+        if (output === false) {
+          return done(err);
         }
 
-        // Stlye the output
-        var formatted = style(output, filepath);
+        if (filepath) {
+          grunt.log.subhead('Results for ' + filepath);
+        }
 
-        if (output.passed === false) {
+        var formatted = output;
+
+        // Format the flow results
+        if (typeof output.passed !== 'undefined') {
+          formatted = style(output, filepath);
+        }
+
+        // Log error/successes
+        if (output && output.passed === false) {
           grunt.log.error(formatted + '\n');
           done(false);
-        } else if (output.passed === true) {
+        } else if (output && output.passed === true) {
           grunt.log.ok(formatted + '\n');
           done();
         } else {
-          done(false);
+          // Just complete is nothing else
+          done();
         }
       });
     }
@@ -151,8 +161,8 @@ module.exports = function(grunt) {
     if (options.background === true) {
       // When we catch CTRL+C kill the flow server
       process.on('SIGINT', function() {
-        args = ['flow', 'stop'];
-        flow.run(args, opts, function(err, output) {
+        args = ['stop'];
+        flow.run(args, opts, void 0, function(err, output) {
           process.kill();
         });
       });

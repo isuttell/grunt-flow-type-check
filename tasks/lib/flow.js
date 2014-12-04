@@ -52,16 +52,7 @@ exports.init = function(grunt) {
    */
   exports.run = function(args, opts, input, done) {
     // Is Flow installed on this system?
-    for (var i = 0; i < args.length; i++) {
-      if (args[i] === 'flow') {
-        args[i] = which('flow');
-        break;
-      }
-    }
-
-    // Strip cmd from args array
-    var cmd = args[0];
-    args.splice(0, 1);
+    var cmd = which('flow');
 
     // Inform us what we're running
     grunt.verbose.ok('Running ' + cmd + ' ' + args.join(' '));
@@ -75,11 +66,17 @@ exports.init = function(grunt) {
       // By default we have no stdout, its pulled from stdio
       var output = false;
 
-      // Conver to json (options.json === true)
-      // if ((code === 0 || code === 2) && args.indexOf('--json') > -1) {
-      //   output = JSON.parse(result.stdout);
-      if (code === 0 || code === 2) {
+      // Report Errors
+      if (code === 2 && result.stderr) {
+        grunt.warn(result.stderr);
+      } else if (code === 0 && result.stderr) {
+        grunt.log.ok(result.stderr);
+      }
+
+      // Grab and conver the result
+      if ((code === 0 || code === 2) && result.stdout.length > 0) {
         output = result.stdout;
+        // Conver to json
         if (typeof output === 'string') { output = JSON.parse(output); }
       }
 

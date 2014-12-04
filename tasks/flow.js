@@ -30,8 +30,6 @@ module.exports = function(grunt) {
       module: ''
     });
 
-    var bg = !!options.background;
-
     // This task is asynchronous
     var callback = this.async();
 

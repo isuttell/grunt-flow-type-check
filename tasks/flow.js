@@ -14,7 +14,8 @@ var async = require('async');
 module.exports = function(grunt) {
 
   // Flow control library
-  var flow = require('./lib/run').init(grunt);
+  var Flow = require('./lib/run').init(grunt);
+  var FlowArgs = require('./lib/args').init(grunt);
 
   grunt.registerMultiTask('flow', 'Facebook\'s Flow static type checking', function() {
     // Default options
@@ -25,7 +26,6 @@ module.exports = function(grunt) {
       showAllErrors: false,
       timeout: -1,
       stripRoot: false,
-      // profile: false,
       retries: -1,
       module: ''
     });
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
     var callback = this.async();
 
     // Default args and process options
-    var args = flow.args.call(this, this.args[0], options, this.data);
+    var args = FlowArgs.make.call(this, this.args[0], options, this.data);
 
     /**
      * Run the flow command either in loop or once
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
       }
 
       // Run and pipe
-      flow.run(args, {}, contents, function(err, output) {
+      Flow.run(args, {}, contents, function(err, output) {
         if (output === false || grunt.util.kindOf(output) !== 'object') {
           return done(err);
         }
@@ -97,7 +97,7 @@ module.exports = function(grunt) {
       // When we catch CTRL+C kill the flow server
       process.on('SIGINT', function() {
         args = ['stop'];
-        flow.run(args, {}, void 0, function(err, output) {
+        Flow.run(args, {}, void 0, function(err, output) {
           process.kill();
         });
       });

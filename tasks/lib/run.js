@@ -8,60 +8,12 @@
 
 'use strict';
 
-var AVAILABLECOMMANDS = ['start', 'status', 'stop', 'check', 'single'];
-
-// Yes or not arguments to flow
-var BOOLEANARGS = {
-  all: '--all',
-  weak: '--weak',
-  profile: '--profile', // Ignored since we're using json
-  stripRoot: '--strip-root',
-  showAllErrors: '--show-all-errors'
-};
-
-// Arguments that take input
-var VARIABLEARGS = {
-  'lib': '--lib',
-  'module': '--module',
-  'timeout': '--timeout',
-  'retries': '--retries',
-};
-
+/**
+ * Setups up grunt access
+ *
+ * @param     {Object}    grunt
+ */
 exports.init = function(grunt) {
-
-  // Add the json flag
-  function addJsonArg(args, options) {
-    // Output to json so we can style it ourselves
-    var jsonCommands = ['check', 'single', 'status', 'check-contents'];
-    if (jsonCommands.indexOf(args[0]) > -1) {
-      args.push('--json');
-    }
-    return args;
-  }
-
-  // Add additional options
-  function addFlowArgs(args, options) {
-    var i;
-    // Commands to control the server
-    var controlCommands = ['start', 'stop', 'check', 'single'];
-    if (controlCommands.indexOf(args[0]) > -1) {
-      // Check for positive boolean arguments
-      for (i in BOOLEANARGS) {
-        if (options.hasOwnProperty(i) && grunt.util.kindOf(options[i]) === 'boolean' && options[i]) {
-          args.push(BOOLEANARGS[i]);
-        }
-      }
-
-      // Check for arguments that take actual input
-      for (i in VARIABLEARGS) {
-        if (options.hasOwnProperty(i) && options[i].length > 0) {
-          args.push('--' + i);
-          args.push(options[i]);
-        }
-      }
-    }
-    return args;
-  }
 
   /**
    * Looks for a valid version of a command. First checks the system for the
@@ -105,11 +57,34 @@ exports.init = function(grunt) {
    * @param     {Function}    done    Callback when done
    */
   exports.run = function(args, opts, input, done) {
-    // Is Flow installed on this system?
+
+    /**
+     * Some errors we just need to alert the user, and some we need to fail
+     *
+     * @param     {String}    error    Error message
+     * @param     {Number}    code     Exit Code
+     */
+    function reportErrors(error, code) {
+      /* @covignore */
+      if (code === 127) {
+        // Code 127 means we can't find any version for flow that works
+        grunt.warn(
+          'You need to have Flow installed ' +
+          'and in your system PATH for this task to work. ' +
+          'More info: https://github.com/isuttell/grunt-flow-type-check'
+        );
+      } else if (error && code === 0) {
+        grunt.log.ok(error);
+      } else if (error) {
+        grunt.warn(error);
+      }
+    }
+
+    // Get the location of flow on this system
     var cmd = which('flow');
 
     // Inform us what we're running
-    grunt.verbose.ok('Running ' + cmd + ' ' + args.join(' '));
+    grunt.verbose.ok('Trying to run  ' + cmd + ' ' + args.join(' '));
 
     // Spawn a child to run flow
     var child = grunt.util.spawn({
@@ -117,33 +92,19 @@ exports.init = function(grunt) {
       args: args,
       opts: opts
     }, function(err, result, code) {
-      // By default we have no stdout, its pulled from stdio
-      var output = false;
+      // If there are errors we need to report them
+      reportErrors(result.stderr, code);
 
-      // Report Errors
-      /* @covignore */
-      if (code === 2 && result.stderr) {
-        grunt.warn(result.stderr);
-      } else if (code === 0 && result.stderr) {
-        grunt.log.ok(result.stderr);
+      // Grab and try to convert the result to an object
+      var output = result.stdout || result.stderr;
+      try {
+        output = JSON.parse(output);
+      } catch (e) {
+        output = result.toString();
       }
 
-      // Grab and conver the result
-      if ((code === 0 || code === 2) && result.stdout.length > 0) {
-        output = result.stdout;
-        // Conver to json
-        if (grunt.util.kindOf(output) === 'string') { output = JSON.parse(output); }
-      }
-
-      // Code 127 means we can't find any version for flow that works
-      if (code === 127) {
-        /* @covignore */
-        grunt.warn(
-          'You need to have Flow installed ' +
-          'and in your system PATH for this task to work. ' +
-          'More info: https://github.com/isuttell/grunt-flow-type-check'
-        );
-      } else if (code === 0) { // Code 0 means success
+      // Return the result
+      if (code === 0) { // Code 0 means success
         return done(true, output);
       } else { // Everything else means we've failed
         return done(false, output);
@@ -157,35 +118,6 @@ exports.init = function(grunt) {
         child.stdin.end();
       });
     }
-  };
-
-  // Setup the flow args
-  exports.args = function(command, options, data) {
-    var args = [];
-
-    // Figure out what command to run
-    if (AVAILABLECOMMANDS.indexOf(command) > -1) {
-      args.push(command);
-    } else {
-      // Default to a basic full check
-      args.push('check');
-    }
-
-    if (grunt.util.kindOf(data.src) === 'string') {
-      // Where is `.flowconfig`
-      args.push(data.src);
-    } else if (grunt.util.kindOf(data.files) === 'object') {
-      // Switch to single file mode
-      args = ['check-contents'];
-    }
-
-    // Add arguments for commands that output json
-    args = addJsonArg(args, options);
-
-    // Add arguments for for flow commands
-    args = addFlowArgs(args, options);
-
-    return args;
   };
 
   return exports;

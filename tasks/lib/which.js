@@ -15,6 +15,7 @@ var COLON = ':';
 
 function isExe(mod, uid, gid) {
   /* jshint ignore:start */
+  /* @covignore */ // How to do we test for this?
   var ret = (mod & 0001) ||
             (mod & 0010) && process.getgid && gid === process.getgid() ||
             (mod & 0100) && process.getuid && uid === process.getuid();
@@ -47,6 +48,7 @@ function which(cmd) {
       try {
         stat = fs.statSync(cur);
       } catch (ex) {}
+      /* @covignore */ // How do we test for this?
       if (stat &&
           stat.isFile() &&
           isExe(stat.mode, stat.uid, stat.gid)) { return cur; }

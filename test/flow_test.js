@@ -2,6 +2,7 @@
 
 var grunt = require('grunt');
 var flow = require(process.env.NODE_ENV === 'test' ? '../tasks-cov/lib/run' : '../tasks/lib/run').init(grunt);
+var style = require(process.env.NODE_ENV === 'test' ? '../tasks-cov/lib/style' : '../tasks/lib/style');
 /*
   ======== A Handy Little Nodeunit Reference ========
   https://github.com/caolan/nodeunit
@@ -138,5 +139,53 @@ exports.flow = {
     test.notEqual(args.indexOf(options.module), -1, '--module property should exist');
     test.done();
   },
+  styleCheck: function(test) {
+    test.expect(2);
+
+    var options = {};
+
+    var data = {
+      src: 'test/fixtures'
+    };
+
+    // Generate
+    var args = flow.args('check', options, data);
+
+    // Actually run Flow on two files
+    flow.run(args, {}, void 0, function(err, result) {
+      var formatted = style(result);
+      test.equal(typeof result, 'object', 'The result should be an object');
+      test.equal(typeof formatted, 'string', 'It should return a string');
+      test.done();
+    });
+  },
+  styleWithErrors: function(test) {
+    test.expect(1);
+
+    var result = {
+      passed: false,
+      errors: [{
+        message: [{
+          path: '-',
+          line: 1,
+          start: 2,
+          end: 3,
+          descr: 'Error Messages'
+        }, {
+          path: '-',
+          line: 1,
+          start: 2,
+          end: 3,
+          descr: 'Error Messages'
+        }]
+      }],
+      version: ' Nov 27 2014 01:32:54'
+    };
+
+    var formatted = style(result);
+
+    test.equal(typeof formatted, 'string', 'It should return a string');
+    test.done();
+  }
 
 };

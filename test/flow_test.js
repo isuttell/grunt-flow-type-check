@@ -1,7 +1,7 @@
 'use strict';
 
 var grunt = require('grunt');
-var flow = require('../tasks/lib/run').init(grunt);
+var flow = require(process.env.NODE_ENV === 'test' ? '../tasks-cov/lib/run' : '../tasks/lib/run').init(grunt);
 /*
   ======== A Handy Little Nodeunit Reference ========
   https://github.com/caolan/nodeunit

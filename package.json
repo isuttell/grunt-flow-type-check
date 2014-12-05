@@ -25,15 +25,21 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "coveralls": "./node_modules/jscoverage/bin/jscoverage tasks && NODE_ENV=test ./node_modules/nodeunit/bin/nodeunit --reporter=lcov test/ | ./node_modules/coveralls/bin/coveralls.js",
+    "codeclimate": "./node_modules/jscoverage/bin/jscoverage tasks && NODE_ENV=test ./node_modules/nodeunit/bin/nodeunit --reporter=lcov test/ | CODECLIMATE_REPO_TOKEN=6db4bd52612541c2af5e02886b373aba0b8da5f89b26d9e2cb0831dacd06b163 ./node_modules/codeclimate-test-reporter/bin/codeclimate.js"
   },
   "devDependencies": {
+    "codeclimate-test-reporter": "0.0.4",
+    "coveralls": "^2.11.2",
     "grunt": "~0.4.5",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.9.2",
     "grunt-contrib-nodeunit": "^0.3.3",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-jscs": "^0.8.1"
+    "grunt-jscs": "^0.8.1",
+    "jscoverage": "^0.5.9",
+    "nodeunit": "^0.9.0"
   },
   "peerDependencies": {
     "grunt": "~0.4.5"

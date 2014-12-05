@@ -89,6 +89,7 @@ exports.init = function(grunt) {
         'https://github.com/isuttell/grunt-flow-type-check');
     } else if (!cmd) {
       // If all else fails just try running flow without a path
+       /* @covignore */
       cmd = name;
     }
 
@@ -120,6 +121,7 @@ exports.init = function(grunt) {
       var output = false;
 
       // Report Errors
+      /* @covignore */
       if (code === 2 && result.stderr) {
         grunt.warn(result.stderr);
       } else if (code === 0 && result.stderr) {
@@ -135,6 +137,7 @@ exports.init = function(grunt) {
 
       // Code 127 means we can't find any version for flow that works
       if (code === 127) {
+        /* @covignore */
         grunt.warn(
           'You need to have Flow installed ' +
           'and in your system PATH for this task to work. ' +
@@ -159,10 +162,6 @@ exports.init = function(grunt) {
   // Setup the flow args
   exports.args = function(command, options, data) {
     var args = [];
-
-    if (command === 'stop') {
-      return ['stop'];
-    }
 
     // Figure out what command to run
     if (AVAILABLECOMMANDS.indexOf(command) > -1) {

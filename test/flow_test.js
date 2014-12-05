@@ -3,6 +3,7 @@
 var grunt = require('grunt');
 var flow = require(process.env.NODE_ENV === 'test' ? '../tasks-cov/lib/run' : '../tasks/lib/run').init(grunt);
 var style = require(process.env.NODE_ENV === 'test' ? '../tasks-cov/lib/style' : '../tasks/lib/style');
+var which = require(process.env.NODE_ENV === 'test' ? '../tasks-cov/lib/which' : '../tasks/lib/which');
 /*
   ======== A Handy Little Nodeunit Reference ========
   https://github.com/caolan/nodeunit
@@ -44,6 +45,53 @@ exports.flow = {
     flow.run(args, {}, void 0, function(err, result) {
       test.equal(result.passed, false, 'There will be failures');
       test.equal(result.errors.length, 1, 'There should be one failure');
+      test.equal(typeof result, 'object', 'It should return an object');
+      test.done();
+    });
+  },
+  runCheckContentsCommandError: function(test) {
+    test.expect(3);
+
+    var options = {};
+
+    var data = {
+      files: {
+        src: [require('path').resolve('./test/fixtures/typerror.jsx')]
+      }
+    };
+
+    // Generate
+    var args = flow.args('check-contents', options, data);
+    args.push('test/fixtures');
+    var content = grunt.file.read(data.files.src[0]);
+
+    // Assert
+    flow.run(args, {}, content, function(err, result) {
+      test.equal(result.passed, false, 'There will be failures');
+      test.equal(result.errors.length, 1, 'There should be one failure');
+      test.equal(typeof result, 'object', 'It should return an object');
+      test.done();
+    });
+  },
+  runCheckContentsCommandSuccess: function(test) {
+    test.expect(2);
+
+    var options = {};
+
+    var data = {
+      files: {
+        src: [require('path').resolve('./test/fixtures/helloworld.jsx')]
+      }
+    };
+
+    // Generate
+    var args = flow.args('check-contents', options, data);
+    args.push('test/fixtures');
+    var content = grunt.file.read(data.files.src[0]);
+
+    // Assert
+    flow.run(args, {}, content, function(err, result) {
+      test.equal(result.passed, true, 'It should succeed');
       test.equal(typeof result, 'object', 'It should return an object');
       test.done();
     });
@@ -139,6 +187,30 @@ exports.flow = {
     test.notEqual(args.indexOf(options.module), -1, '--module property should exist');
     test.done();
   },
+  unknownCommand: function(test) {
+    test.expect(1);
+
+    var options = {
+      lib: 'lib/',
+      module: 'haste'
+    };
+    var data = {
+      src: '.'
+    };
+
+    // Generate
+    var args = flow.args('fake', options, data);
+
+    // Assert
+    test.equal(args.indexOf('check'), 0, 'It should default to check if we do not known the command');
+    test.done();
+  },
+  whichAbs: function(test) {
+    test.expect(1);
+    var path = '/usr/local/bin/flow';
+    test.equal(which(path), path, 'If the path is absolute then return it');
+    test.done();
+  },
   styleCheck: function(test) {
     test.expect(2);
 
@@ -159,6 +231,30 @@ exports.flow = {
       test.done();
     });
   },
+  styleBadInput: function(test) {
+    test.expect(1);
+
+    var result = false;
+
+    var formatted = style(result);
+
+    test.equal(formatted, result, 'It should  return itself if it is not an object with a passed property');
+    test.done();
+  },
+  styleSuccess: function(test) {
+    test.expect(2);
+
+    var result = {
+      passed: true,
+      version: ' Nov 27 2014 01:32:54'
+    };
+
+    var formatted = style(result);
+
+    test.equal(typeof formatted, 'string', 'It should return a string');
+    test.equal(formatted, '0 Errors Found', 'It should a message with zero erros found');
+    test.done();
+  },
   styleWithErrors: function(test) {
     test.expect(1);
 
@@ -170,7 +266,7 @@ exports.flow = {
           line: 1,
           start: 2,
           end: 3,
-          descr: 'Error Messages'
+          descr: 'Error Messages\nUndefined'
         }, {
           path: '-',
           line: 1,
@@ -178,11 +274,19 @@ exports.flow = {
           end: 3,
           descr: 'Error Messages'
         }]
+      }, {
+        message: [{
+          path: '-',
+          line: 1,
+          start: 2,
+          end: 3,
+          descr: 'Error Messages\nUndefined'
+        }]
       }],
       version: ' Nov 27 2014 01:32:54'
     };
 
-    var formatted = style(result);
+    var formatted = style(result, '.');
 
     test.equal(typeof formatted, 'string', 'It should return a string');
     test.done();

@@ -11,59 +11,10 @@
 var style = require('./lib/style');
 var async = require('async');
 
-// Yes or not arguments to flow
-var booleanArgs = {
-  all: '--all',
-  weak: '--weak',
-  profile: '--profile', // Ignored since we're using json
-  stripRoot: '--strip-root',
-  showAllErrors: '--show-all-errors'
-};
-
-// Arguments that take input
-var variableArgs = {
-  'lib': '--lib',
-  'module': '--module',
-  'timeout': '--timeout',
-  'retries': '--retries',
-};
-
 module.exports = function(grunt) {
 
   // Flow control library
   var flow = require('./lib/run').init(grunt);
-
-  function addJsonArg(args, options) {
-    // Output to json so we can style it ourselves
-    var jsonCommands = ['check', 'single', 'status'];
-    if (jsonCommands.indexOf(args[0]) > -1) {
-      args.push('--json');
-    }
-    return args;
-  }
-
-  function addFlowArgs(args, options) {
-    var i;
-    // Commands to control the server
-    var controlCommands = ['start', 'stop', 'check', 'single'];
-    if (controlCommands.indexOf(args[0]) > -1) {
-      // Check for positive boolean arguments
-      for (i in booleanArgs) {
-        if (options.hasOwnProperty(i) && grunt.util.kindOf(options[i]) === 'boolean' && options[i]) {
-          args.push(booleanArgs[i]);
-        }
-      }
-
-      // Check for arguments that take actual input
-      for (i in variableArgs) {
-        if (options.hasOwnProperty(i) && options[i].length > 0) {
-          args.push('--' + i);
-          args.push(options[i]);
-        }
-      }
-    }
-    return args;
-  }
 
   grunt.registerMultiTask('flow', 'Facebook\'s Flow static type checking', function() {
     // Default options
@@ -83,27 +34,7 @@ module.exports = function(grunt) {
     var callback = this.async();
 
     // Default args and process options
-    var args = [];
-
-    // Figure out what command to run
-    var commands = ['start', 'status', 'stop', 'check', 'single'];
-    if (commands.indexOf(this.args[0]) > -1) {
-      args.push(this.args[0]);
-    } else {
-      // Default to a basic full check
-      args.push('check');
-    }
-
-    // Where is `.flowconfig`
-    if (grunt.util.kindOf(this.data.src) === 'string') {
-      args.push(this.data.src);
-    }
-
-    // Add arguments for commands that output json
-    args = addJsonArg(args, options);
-
-    // Add arguments for for flow commands
-    args = addFlowArgs(args, options);
+    var args = flow.args.call(this, this.args[0], options, this.data);
 
     /**
      * Run the flow command either in loop or once
@@ -122,12 +53,6 @@ module.exports = function(grunt) {
       if (filepath) {
         contents = grunt.file.read(filepath);
         // `flow check-contents` checks input from the stdin
-        args = ['check-contents', '--json'];
-
-        // Only option available
-        if (options.showAllErrors === true) {
-          args.push('--show-all-errors');
-        }
       }
 
       // Run and pipe

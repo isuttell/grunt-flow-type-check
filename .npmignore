@@ -6,3 +6,5 @@ test
 .travis.yml
 .jscsrc
 .jshintrc
+.coveralls.yml
+tasks-cov

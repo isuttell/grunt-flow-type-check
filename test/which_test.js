@@ -32,6 +32,18 @@ exports.flow = {
     var path = '/usr/local/bin/flow';
     test.equal(which(path), path, 'If the path is absolute then return it');
     test.done();
+  },
+  canNotFind: function(test) {
+    test.expect(1);
+    var path = 'this-is-a-fake-file';
+    test.equal(which(path), false, 'It should return false for a cmd that does not exist');
+    test.done();
+  },
+  canFind: function(test) {
+    test.expect(1);
+    var path = 'pwd';
+    test.equal(which(path), '/bin/pwd', 'It should return the absolute path of a file');
+    test.done();
   }
 
 };

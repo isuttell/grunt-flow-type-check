@@ -11,6 +11,8 @@
 
 var path = require('path');
 var fs = require('fs');
+var path = require('path');
+var os = require('os');
 var COLON = ':';
 
 function isExe(mod, uid, gid) {
@@ -25,6 +27,29 @@ function isExe(mod, uid, gid) {
 
 function absUnix(p) {
   return p.charAt(0) === '/' || p === '';
+}
+
+/**
+ * Callback to a file in the repo
+ *
+ * @param     {String}    name    Command to look for
+ *
+ * @return    {Mixed}     String || false
+ */
+function fallack(name) {
+  // We only store the flow binaries in the repo
+  if (name !== 'flow') { return false; }
+
+  // If not, try using the binary in the repo
+  if (os.platform() === 'linux' || os.platform() === 'darwin') {
+    // Choose the binary for the platform
+    var cmd = 'bin/' + os.platform() + '/' + name;
+
+    // Get the absolute path relative to the current folder
+    return path.resolve(__dirname + '/../../' + cmd);
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -54,7 +79,8 @@ function which(cmd) {
           isExe(stat.mode, stat.uid, stat.gid)) { return cur; }
     }
   }
-  return false;
+
+  return fallack(cmd);
 }
 
 module.exports = which;

@@ -166,6 +166,7 @@ grunt.initConfig({
 Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.
 
 ## Release History
+* v0.4.3 - Updated binaries and task to support flow 0.4.0
 * v0.4.2 - Refactor and removed extraneous option
 * v0.4.1 - Fixed bug where watch didn't work
 * v0.4.0 - Added single file check, colors and Flow binaries to 0.1.2

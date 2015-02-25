@@ -47,7 +47,6 @@ grunt.initConfig({
         background: false,    // Watch/Server mode
         all: false,           // Check all files regardless
         lib: '',              // Library directory
-        module: '',           // Module mode
         stripRoot: false,     // Relative vs Absolute paths
         weak: false,          // Force weak check
         showAllErrors: false, // Show more than 50 errors
@@ -88,12 +87,6 @@ Type: `Boolean`
 Default value: `false`
 
 Use relative paths instead of absolute
-
-#### options.module
-Type: `String`
-Default value: ``
-
-Module can either be `haste` or `node`.
 
 #### options.all
 Type: `Boolean`

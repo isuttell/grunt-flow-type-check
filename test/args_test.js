@@ -42,10 +42,9 @@ exports.flow = {
 
     // Generate
     var args = FlowArgs.make('check', options, data);
-
     // Assert
     test.equal(args.indexOf('check'), 0, 'The first argument should be check');
-    test.equal(args.indexOf(data.src), 1, 'The location of the config should be next');
+    test.equal(args.indexOf(data.src), args.length - 1, 'The location of the config should be next');
     test.notEqual(args.indexOf('--json'), -1, '--json arg should exist');
     test.notEqual(args.indexOf('--strip-root'), -1, '--strip-root arg should exist');
     test.notEqual(args.indexOf('--lib'), -1, '--lib arg should exist');
@@ -98,11 +97,10 @@ exports.flow = {
     test.done();
   },
   startCommand: function(test) {
-    test.expect(6);
+    test.expect(4);
 
     var options = {
       lib: 'lib/',
-      module: 'haste'
     };
     var data = {
       src: '.'
@@ -116,8 +114,6 @@ exports.flow = {
     test.equal(args.indexOf('--json'), -1, '--json arg should not exist');
     test.notEqual(args.indexOf('--lib'), -1, '--lib arg should exist');
     test.notEqual(args.indexOf(options.lib), -1, '--lib property should exist');
-    test.notEqual(args.indexOf('--module'), -1, '--module arg should exist');
-    test.notEqual(args.indexOf(options.module), -1, '--module property should exist');
     test.done();
   },
   unknownCommand: function(test) {

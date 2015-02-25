@@ -35,7 +35,6 @@ var BOOLEANARGS = {
  */
 var VARIABLEARGS = {
   'lib': '--lib',
-  'module': '--module',
   'timeout': '--timeout',
   'retries': '--retries',
 };
@@ -50,12 +49,13 @@ exports.init = function(grunt) {
   /**
    * Add the json arg for commands that accept it
    *
-   * @param    {Array}    args       Current arguments
+   * @param    {String}   cmd       Command to run
+   * @param    {Array}    args      Current arguments
    */
-  function addJsonArg(args) {
+  function addJsonArg(cmd, args) {
     // Output to json so we can style it ourselves
     var jsonCommands = ['check', 'single', 'status', 'check-contents'];
-    if (jsonCommands.indexOf(args[0]) > -1) {
+    if (jsonCommands.indexOf(cmd) > -1) {
       args.push('--json');
     }
     return args;
@@ -64,14 +64,15 @@ exports.init = function(grunt) {
   /**
    * Adds arguments for commands that accept them
    *
+   * @param    {String}   cmd        Command to run
    * @param    {Array}    args       Current arguments
    * @param    {Object}   options    Grunt task options
    */
-  function addFlowArgs(args, options) {
+  function addFlowArgs(cmd, args, options) {
     var i;
     // Commands to control the server
     var controlCommands = ['start', 'stop', 'check', 'single'];
-    if (controlCommands.indexOf(args[0]) > -1) {
+    if (controlCommands.indexOf(cmd) > -1) {
       // Check for positive boolean arguments
       for (i in BOOLEANARGS) {
         if (options.hasOwnProperty(i) && grunt.util.kindOf(options[i]) === 'boolean' && options[i]) {
@@ -110,19 +111,19 @@ exports.init = function(grunt) {
       args.push('check');
     }
 
+    // Add arguments for commands that output json
+    args = addJsonArg(args[0], args, options);
+
+    // Add arguments for for flow commands
+    args = addFlowArgs(args[0], args, options);
+
     if (grunt.util.kindOf(data.src) === 'string') {
       // Where is `.flowconfig`
       args.push(data.src);
     } else if (grunt.util.kindOf(data.files) === 'object') {
       // Switch to single file mode
-      args = ['check-contents'];
+      args = ['check-contents', '--json'];
     }
-
-    // Add arguments for commands that output json
-    args = addJsonArg(args, options);
-
-    // Add arguments for for flow commands
-    args = addFlowArgs(args, options);
 
     return args;
   };

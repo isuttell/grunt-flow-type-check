@@ -96,11 +96,11 @@ module.exports = function(grunt) {
     if (options.background === true) {
       // When we catch CTRL+C kill the flow server
       process.on('SIGINT', function() {
-        args = ['stop'];
+        args = ['stop', this.data.src];
         Flow.run(args, {}, void 0, function(err, output) {
-          process.kill();
+          process.kill(0);
         });
-      });
+      }.bind(this));
     }
 
   });

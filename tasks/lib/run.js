@@ -12,7 +12,7 @@ var NO_FLOW = 'You need to have Flow installed ' +
               'and in your system PATH for this task to work. ' +
               'More info: https://github.com/isuttell/grunt-flow-type-check';
 
-var which = require('./which');
+var flow = require('flow-bin');
 
 /**
  * Setups up grunt access
@@ -49,18 +49,9 @@ exports.init = function(grunt) {
       }
     }
 
-    // Get the location of flow on this system
-    var cmd = which('flow');
-
-    // If cmd returns false we couldn't find a version of flow
-    if (cmd === false) { grunt.warn(NO_FLOW); }
-
-    // Inform us what we're running
-    grunt.verbose.ok('Trying to run  ' + cmd + ' ' + args.join(' '));
-
     // Spawn a child to run flow
     var child = grunt.util.spawn({
-      cmd: cmd,
+      cmd: flow,
       args: args,
       opts: opts
     }, function(err, result, code) {

@@ -9,7 +9,7 @@
 [![npm release](http://img.shields.io/npm/v/grunt-flow-type-check.svg?style=flat)](https://www.npmjs.org/package/grunt-flow-type-check)
 
 ## Getting Started
-This plugin requires Grunt `~0.4.5`
+This plugin requires Grunt `>=0.4.0`
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
@@ -27,13 +27,6 @@ grunt.loadNpmTasks('grunt-flow-type-check');
 _Run this task with the `grunt flow` command._
 
 [Flow](http://flowtype.org) is a static type checker, designed to find type errors in JavaScript programs. Typed Flow code easily transforms down to regular JavaScript, so it runs anywhere.
-
-This tasks requires Flow to be installed on your system. It's currently only available on OSX and linux. Detailed instructions can be found on the [Getting Started](http://flowtype.org/docs/getting-started.html) page. For OSX users, the fastest way to install is using [Brew](http://brew.sh).
-
-```shell
-brew update
-brew install flow
-```
 
 ### Overview
 In your project's Gruntfile, add a section named `flow` to the data object passed into `grunt.initConfig()`.
@@ -166,6 +159,7 @@ grunt.initConfig({
 Please take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using 'grunt test'.
 
 ## Release History
+* v0.4.4 - Switched to flow-bin
 * v0.4.3 - Updated binaries and task to support flow 0.4.0
 * v0.4.2 - Refactor and removed extraneous option
 * v0.4.1 - Fixed bug where watch didn't work
